@@ -7,11 +7,6 @@ except ConnectionRefusedError:
     mc.create()
     mc.connect("localhost", "test")
 
-
-def post(cmd, player="PortalHub"):
-    return mc.post(f"sudo {player} /{cmd}")
-
-
 def get_player_pos(player) -> mc.BlockCoordinates:
     coords = mc.post(f"data get entity {player}")
 
@@ -19,7 +14,6 @@ def get_player_pos(player) -> mc.BlockCoordinates:
     coords = coords[: coords.find("]")]
     coords = coords[coords.find("[") + 1 :]
     coords = coords.split(",")
-
     try:
         x = float(coords[0][:-1])
         y = float(coords[1][:-1])
@@ -28,8 +22,10 @@ def get_player_pos(player) -> mc.BlockCoordinates:
         x = 0.0
         y = 0.0
         z = 0.0
-
     return mc.BlockCoordinates(x, y, z)
+
+def post(cmd, player="PortalHub"):
+    return mc.post(f"sudo {player} /{cmd}")
 
 
 mc.post("npc remove all")
@@ -37,10 +33,6 @@ mc.post("npc remove all")
 # clean_up_npc(nb)
 npc = ["Maria", "Paul", "Alex", "Tom"]
 for name in npc:
-    ret = post(f"npc create {name} --trait sentinel")
-    print(ret)
-    ret = post("sentinel respawntime -1")
-    print(ret)
-    ret = post("sentinel addtarget npcs")
+    spawn_npc("Maria")
     print(ret)
     sleep(4)
