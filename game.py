@@ -1,4 +1,3 @@
-from io import DEFAULT_BUFFER_SIZE
 from time import sleep
 import mc_api as mc
 
