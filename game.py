@@ -46,39 +46,30 @@ def clean_npc():
     mc.post("npc remove all")
 
 
-class Player():
+class Player:
     def __init__(self, name, pos):
         self.name = name
         self.x = pos.x
-        self.y = pos.y 
+        self.y = pos.y
         self.z = pos.z + 15
         self.created_at = datetime.now()
         self.create_npc()
-        
-        
-        # sleep(1)
+
         self.path_to(mc.Coordinates(pos.x, pos.y, pos.z - 28))
 
     def create_npc(self):
         post(f"npc create {self.name} --at {self.x}:{self.y}:{self.z} --trait sentinel")
-        post("sentinel addtarget passive_mobs")
         post("sentinel speed 1")
         post("waypoints disableteleport")
         post("npc pathfindingrange 300")
         post("sentinel respawntime -1")
         post("npc pathopt --use-new-finder true")
-        # post("npc pathopt --stationary-ticks 10")
 
     def path_to(self, pos):
-        print(pos)
-        # sleep(0.5)
         post(f"npc pathto {pos.x} {pos.y} {pos.z}")
-        sleep(0.6)
+        sleep(0.5)
         post(f"npc pathto {pos.x} {pos.y} {pos.z}")
-        # sleep(0.5)
-        # post(f"npc pathto {pos.x} {pos.y} {pos.z}")
-        
-        
+
     def make_agro(self):
         post(f"npc sel {self.name}")
         post("sentinel addtarget npcs")
@@ -87,31 +78,30 @@ class Player():
 queue = []
 
 clean_npc()
-names = [ str(x) for x in range(150)]
+names = [f"bot-{str(x)}" for x in range(150)]
 
-def next_name():
+i = 0
+
+
+def name_list():
     i = 0
     while i < len(names):
-
         yield names[i]
-        i += 1 
+        i += 1
+
 
 spawn_pos = mc.Coordinates(-148.5, 19, 135.5)
-
+name = name_list()
 while True:
-    
-    n = next(next_name())
-    queue.append(Player(n, spawn_pos))
-        
+
+    queue.append(Player(next(name), spawn_pos))
 
     for p in queue:
-        
+
         if (datetime.now() - p.created_at).total_seconds() > 20:
-            print(f"Making {p.name} agro")
             queue.remove(p)
             p.make_agro()
     sleep(1)
-    
 
 
 # while True:
@@ -123,5 +113,3 @@ while True:
 #             pseudo = msg.split(" ")[1]
 #             create_npc(pseudo, -150, 20, 20)
 #     sleep(0.1)
-
-
